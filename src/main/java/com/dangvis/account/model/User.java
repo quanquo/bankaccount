@@ -7,10 +7,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 
-@Entity(name = "user")
-public class User {
+@Entity(name = "bank_user")
+public class User {  
     
     @Id
+    @Column(name = "username", length=10)
     private String username;
     
     @Column(name = "fullname")
@@ -40,4 +41,10 @@ public class User {
 	
 	public BankAccount getBankAccount() { return this.bankAccount; }
 	public void setBankAccount(BankAccount newAccount) { this.bankAccount = newAccount; }
+	
+/*	public String toString() {
+		return "Username " + this.getUsername() +
+				": " + this.getName() + " - " + this.bankAccount.toString();
+	}
+*/	
 }
