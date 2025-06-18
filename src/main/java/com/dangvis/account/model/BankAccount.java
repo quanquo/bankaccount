@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,17 +31,24 @@ public class BankAccount {
     
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
 	private User user;
     
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Transaction> transaction;
-	
+	@OneToMany(
+			mappedBy="bankAccount",
+			fetch = FetchType.LAZY,
+	        cascade = CascadeType.ALL,
+	        orphanRemoval = true
+	    )
+	@JsonManagedReference
+    private List<Transaction> transactions;
+		
 	public BankAccount() {
 		this(null, null, null, null);
 	}
 	
 	public BankAccount(String accountNumber, User user, BigDecimal balance) {
-		this.transaction = new ArrayList<Transaction>();
+		this.transactions = new ArrayList<Transaction>();
 	}
 	
 	public BankAccount(String accountNumber, String description, User user, BigDecimal balance) {
@@ -46,7 +56,7 @@ public class BankAccount {
 		this.setUser(user);
 		this.setBalance(balance);
 		this.setDescription(description); 
-		this.transaction = new ArrayList<Transaction>();
+		this.transactions = new ArrayList<Transaction>();
 	}
 
 	public String getAccountNumber() { return accountNumber; }
@@ -62,11 +72,6 @@ public class BankAccount {
 	public void setUser(User user) { this.user = user; }
 	
 	public List<Transaction> getTransactions() {
-		return this.transaction;
+		return this.transactions;
 	}
-	
-/*	public String toString() {
-		return "AccountNumber " + this.getAccountNumber() + " of " + this.getUser().getUsername() +
-				": " + this.getDescription()+ " - " + this.getBalance().toPlainString();
-	}*/
 }

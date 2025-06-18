@@ -4,11 +4,16 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity(name = "transaction")
 public class Transaction {
@@ -35,8 +40,18 @@ public class Transaction {
 	@Column(name = "type", length=1)
 	private String transactionType;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="bank_account_id", nullable=false)
+	@JsonBackReference
+	private BankAccount bankAccount;
+	
 	public Transaction() {
 		transactionTimeStamp = LocalDateTime.now();
+	}
+	
+	public Transaction(BankAccount newBankAccount) {
+		transactionTimeStamp = LocalDateTime.now();
+		this.setBankAccount(newBankAccount);
 	}
 
 	public UUID getUuid() {
@@ -85,5 +100,13 @@ public class Transaction {
 
 	public void setTransactionType(String transactionType) {
 		this.transactionType = transactionType;
+	}
+	
+	public BankAccount getBankAccount() {
+		return this.bankAccount;
+	}
+	
+	public void setBankAccount(BankAccount newBankAccount) {
+		this.bankAccount = newBankAccount;
 	}
 }

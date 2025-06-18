@@ -61,13 +61,32 @@ public class BankAccountService {
         Transaction newTransaction = new Transaction();
         newTransaction.setAmount(BigDecimal.valueOf(amount));
         newTransaction.setTransactionType(Transaction.DEPOSIT);
+        newTransaction.setBankAccount(acc);
         
         acc.getTransactions().add(newTransaction);
         acc.setBalance( acc.getBalance().add(BigDecimal.valueOf(amount)));
         accountRepository.save(acc);
     }
     
-    // withdraw
+    public void withdraw(BankAccount acc, double amount) {
+    	if (! accountRepository.existsByAccountNumber(acc.getAccountNumber())) {
+            throw new RuntimeException("Account number does not exist: " + acc.getAccountNumber());
+        }
+    	
+        if (amount < 0 ) {
+        	throw new RuntimeException("Amount by withdraw must be positiv: " + amount);
+        }
+        
+        Transaction newTransaction = new Transaction();
+        newTransaction.setAmount(BigDecimal.valueOf(amount));
+        newTransaction.setTransactionType(Transaction.WITHDRAW);
+        newTransaction.setBankAccount(acc);
+        
+        acc.getTransactions().add(newTransaction);
+        acc.setBalance( acc.getBalance().subtract(BigDecimal.valueOf(amount)));
+        accountRepository.save(acc);
+    }
+    
     // transfer
      
 }

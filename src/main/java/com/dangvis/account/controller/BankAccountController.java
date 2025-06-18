@@ -67,5 +67,20 @@ public class BankAccountController {
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().build();
 		}
+	} 
+	
+	@PostMapping("/withdraw")
+	public ResponseEntity<BankAccount> withdraw(@RequestBody Map<String, Object> request) {
+		try {
+			String accountNumber = request.get("accountNumber").toString();		
+			BigDecimal amount = new BigDecimal(request.get("amount").toString()); 
+			
+			Optional<BankAccount> account = bankAccountService.getAccountByAccountNumber(accountNumber);
+			bankAccountService.withdraw(account.get(), amount.doubleValue());
+			
+			return ResponseEntity.ok(account.get());
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().build();
+		}
 	}  
 }
